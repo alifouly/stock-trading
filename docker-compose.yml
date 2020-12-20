@@ -1,0 +1,39 @@
+version: '3.5'
+
+services:
+
+    vernemq:
+        environment:
+            - DOCKER_VERNEMQ_ACCEPT_EULA=yes
+            - DOCKER_VERNEMQ_ALLOW_ANONYMOUS=on
+            - MQTT_TOPIC=thndr-trading
+        image: erlio/docker-vernemq
+
+    streamer:
+        environment:
+            - MQTT_HOST=vernemq
+            - MQTT_PORT=1883
+            - MQTT_TOPIC=thndr-trading
+        image: thndr/streamer:0.2
+        depends_on:
+            - vernemq
+            
+    main:
+        image: alifouly/thndr-main:0.1
+        volumes:
+          - ./db:/db
+        ports: 
+          - 8000:8000
+
+    consumer:
+        image: alifouly/thndr-consumer:0.1
+        volumes:
+          - ./db:/db
+        environment:
+            - MQTT_HOST=broker.hivemq.com
+            - MQTT_PORT=1883
+            - MQTT_TOPIC=testtopic
+        depends_on:
+            - main
+
+ 
