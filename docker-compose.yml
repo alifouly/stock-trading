@@ -23,7 +23,7 @@ services:
         volumes:
           - ./db:/db
         ports: 
-          - 8000:8000
+          - 8000:80
 
     consumer:
         image: alifouly/thndr-consumer:0.1
